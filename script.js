@@ -79,3 +79,54 @@ renderBars(); // Show the current bars
 // Listen for clicks on the water button and call waterWolf when clicked
 waterBtn.addEventListener('click', waterWolf);
 
+// --- Water Intake Logger Code ---
+// Get references to the new water log buttons and total display
+const add8ozBtn = document.getElementById('add-8oz');
+const add16ozBtn = document.getElementById('add-16oz');
+const add24ozBtn = document.getElementById('add-24oz');
+const waterTotalDiv = document.getElementById('water-total');
+
+// Function to get today's date as a string
+function getToday() {
+  return new Date().toLocaleDateString();
+}
+
+// Load saved water log or start at 0 if new day
+let waterLog = 0;
+const savedWaterDate = localStorage.getItem('waterDate');
+const savedWaterTotal = localStorage.getItem('waterTotal');
+if (savedWaterDate === getToday() && savedWaterTotal) {
+  waterLog = parseInt(savedWaterTotal);
+} else {
+  waterLog = 0;
+  localStorage.setItem('waterDate', getToday());
+  localStorage.setItem('waterTotal', waterLog);
+}
+
+// Function to update the water total display
+function renderWaterTotal() {
+  waterTotalDiv.innerText = `Total today: ${waterLog} oz`;
+}
+
+// Functions to add ounces and update storage/display
+function addOunces(oz) {
+  waterLog += oz;
+  localStorage.setItem('waterTotal', waterLog);
+  localStorage.setItem('waterDate', getToday());
+  renderWaterTotal();
+}
+
+// Add event listeners for each button
+add8ozBtn.addEventListener('click', function() {
+  addOunces(8);
+});
+add16ozBtn.addEventListener('click', function() {
+  addOunces(16);
+});
+add24ozBtn.addEventListener('click', function() {
+  addOunces(24);
+});
+
+// Show the current water total on page load
+renderWaterTotal();
+

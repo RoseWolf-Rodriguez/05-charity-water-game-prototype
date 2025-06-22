@@ -1,7 +1,7 @@
 /* Set the basic font, background color, text color, and center everything */
 body {
   font-family: Arial, sans-serif;
-  background-color: #eafafc; /* Light blue background */
+  background-color: #fffd84; /* Light yellow background */
   color: #333; /* Dark text color */
   text-align: center;
   padding: 2rem; /* Space around the content */
@@ -12,7 +12,7 @@ body {
   width: 100%; /* Make container responsive */
   max-width: 400px; /* Limit width for better appearance */
   margin: auto; /* Center horizontally */
-  background-color: #ffffff; /* White background */
+  background-color: #26d7ffd4; /* White background */
   padding: 1rem; /* Space inside the box */
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
@@ -31,16 +31,18 @@ button {
   padding: 0.7rem 1.2rem; /* Space inside the button */
   font-size: 1rem; /* Text size */
   margin: 1rem 0; /* Space above and below */
-  background-color: #42a5f5; /* Blue background */
+  background-color: #2e9df7; /* Charity: water blue */
   color: white; /* White text */
   border: none; /* No border */
   border-radius: 5px; /* Rounded corners */
   cursor: pointer; /* Pointer cursor on hover */
+  transition: background 0.2s;
 }
 
 /* Change button color when hovered over */
 button:hover {
-  background-color: #1e88e5; /* Darker blue on hover */
+  background-color: #ffc907; /* Charity: water yellow on hover */
+  color: #2e9df7; /* Blue text for contrast on yellow */
 }
 
 /* Style the hydration and health bars (emoji size and spacing) */
@@ -48,6 +50,16 @@ button:hover {
 #health-bar {
   font-size: 1.5rem; /* Make emojis bigger */
   margin: 0.5rem 0; /* Space above and below bars */
+}
+
+/* Add a border and background to the water log section for emphasis */
+.water-log-section {
+  background: #fffbe6; /* Light yellow background */
+  border: 2px solid #ffc907; /* Yellow border */
+  border-radius: 10px;
+  margin: 2rem auto 0 auto;
+  max-width: 400px;
+  padding: 1rem;
 }
 
 
