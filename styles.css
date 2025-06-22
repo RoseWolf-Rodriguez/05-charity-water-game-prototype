@@ -9,6 +9,7 @@ body {
 
 /* Style the main game container box */
 .game-container {
+  width: 100%; /* Make container responsive */
   max-width: 400px; /* Limit width for better appearance */
   margin: auto; /* Center horizontally */
   background-color: #ffffff; /* White background */
@@ -19,7 +20,9 @@ body {
 
 /* Style the main wolf image */
 img#wolf {
-  width: 200px; /* Set image width */
+  width: 100%; /* Make image responsive */
+  max-width: 400px; /* Don't exceed original size */
+  height: auto; /* Keep aspect ratio */
   margin-bottom: 1rem; /* Space below the image */
 }
 
