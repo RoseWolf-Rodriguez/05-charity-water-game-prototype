@@ -1,15 +1,50 @@
-/* Charity: water Brand Colors
+/* Set the basic font, background color, text color, and center everything */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #eafafc; /* Light blue background */
+  color: #333; /* Dark text color */
+  text-align: center;
+  padding: 2rem; /* Space around the content */
+}
 
-Primary Colors:
-- Yellow:     #FFC907
-- Blue:       #2E9DF7
+/* Style the main game container box */
+.game-container {
+  max-width: 400px; /* Limit width for better appearance */
+  margin: auto; /* Center horizontally */
+  background-color: #ffffff; /* White background */
+  padding: 1rem; /* Space inside the box */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
 
-Secondary Colors:
-- Light Blue: #8BD1CB
-- Green:      #4FCB53
-- Orange:     #FF902A
-- Red:        #F5402C
-- Dark Green: #159A48
-- Pink:       #F16061
+/* Style the main wolf image */
+img#wolf {
+  width: 200px; /* Set image width */
+  margin-bottom: 1rem; /* Space below the image */
+}
 
-*/
+/* Style all buttons */
+button {
+  padding: 0.7rem 1.2rem; /* Space inside the button */
+  font-size: 1rem; /* Text size */
+  margin: 1rem 0; /* Space above and below */
+  background-color: #42a5f5; /* Blue background */
+  color: white; /* White text */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Change button color when hovered over */
+button:hover {
+  background-color: #1e88e5; /* Darker blue on hover */
+}
+
+/* Style the hydration and health bars (emoji size and spacing) */
+#hydration-bar,
+#health-bar {
+  font-size: 1.5rem; /* Make emojis bigger */
+  margin: 0.5rem 0; /* Space above and below bars */
+}
+
+
