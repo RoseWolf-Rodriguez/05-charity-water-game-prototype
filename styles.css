@@ -1,7 +1,9 @@
 /* Set the basic font, background color, text color, and center everything */
 body {
   font-family: Arial, sans-serif;
-  background-color: #fffd84; /* Light yellow background */
+  /* Add Ethiopia image as background with a transparent white overlay */
+  background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('img/ethiopia.jpg') no-repeat center center fixed;
+  background-size: cover;
   color: #333; /* Dark text color */
   text-align: center;
   padding: 2rem; /* Space around the content */
