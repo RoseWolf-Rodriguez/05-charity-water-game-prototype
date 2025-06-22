@@ -12,8 +12,8 @@
     <div class="game-container">
       <!-- Wolf image, using the correct path to the img folder -->
       <img src="img/wolf.gif" alt="Wolf" id="wolf" />
-      <p id="wolf-message">Hi friend! Stay hydrated 🧡</p>
-      <button id="water-btn">Give Water 💧</button>
+      <p id="wolf-message">Hi friend! Stay hydrated 💛</p>
+      <button id="water-btn">Give Love 💙</button>
     
       <section>
         <h2>Hydration Bar</h2>
@@ -35,6 +35,22 @@
       <button id="add-16oz">+16 oz</button>
       <button id="add-24oz">+24 oz</button>
       <div id="water-total">Total today: 0 oz</div>
+      <button id="reset-water-btn">Reset Water Total</button>
+    </section>
+    <!-- Stored Water Section -->
+    <section class="stored-water-section">
+      <h2>Stored Water for the Wolf</h2>
+      <div id="stored-water-bar">⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️</div>
+      <button id="give-stored-water-btn">Give Stored Water to Wolf 🐺💧</button>
+    </section>
+    <!-- Flip Card Study Section -->
+    <section class="flip-card-section">
+      <h2>Make Your Own Flip Cards!</h2>
+      <label>Question: <input type="text" id="flip-question" /></label><br>
+      <label>Answer: <input type="text" id="flip-answer" /></label><br>
+      <button id="create-flip-btn">Create Flip Card</button>
+      <div class="flip-card-stack" id="flip-card-stack"></div>
+      <div id="flip-stack-feedback"></div>
     </section>
   </main>
   <script src="script.js"></script>

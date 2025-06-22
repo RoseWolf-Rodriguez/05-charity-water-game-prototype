@@ -76,8 +76,18 @@ function dailyDehydration() {
 dailyDehydration(); // Check if a day has passed and update hydration/health
 renderBars(); // Show the current bars
 
-// Listen for clicks on the water button and call waterWolf when clicked
-waterBtn.addEventListener('click', waterWolf);
+// Listen for clicks on the 'Give Love' button and give health
+waterBtn.addEventListener('click', function() {
+  // Increase health if not already at max
+  if (health < MAX_HEALTH) {
+    health++;
+    localStorage.setItem('health', health); // Save new health value
+    wolfMessage.innerText = "The wolf feels your love! 🧡";
+    renderBars(); // Update the bars
+  } else {
+    wolfMessage.innerText = "The wolf already feels great! 🧡";
+  }
+});
 
 // --- Water Intake Logger Code ---
 // Get references to the new water log buttons and total display
@@ -95,12 +105,16 @@ function getToday() {
 let waterLog = 0;
 const savedWaterDate = localStorage.getItem('waterDate');
 const savedWaterTotal = localStorage.getItem('waterTotal');
+let leftoverOunces = parseInt(localStorage.getItem('leftoverOunces')) || 0; // Track leftover ounces for stored water
 if (savedWaterDate === getToday() && savedWaterTotal) {
   waterLog = parseInt(savedWaterTotal);
+  // leftoverOunces stays as loaded
 } else {
   waterLog = 0;
+  leftoverOunces = 0; // Reset leftover ounces if new day
   localStorage.setItem('waterDate', getToday());
   localStorage.setItem('waterTotal', waterLog);
+  localStorage.setItem('leftoverOunces', leftoverOunces);
 }
 
 // Function to update the water total display
@@ -108,15 +122,78 @@ function renderWaterTotal() {
   waterTotalDiv.innerText = `Total today: ${waterLog} oz`;
 }
 
-// Functions to add ounces and update storage/display
-function addOunces(oz) {
-  waterLog += oz;
-  localStorage.setItem('waterTotal', waterLog);
-  localStorage.setItem('waterDate', getToday());
-  renderWaterTotal();
+// --- Stored Water Section Logic ---
+// Get references to stored water bar and button
+const storedWaterBar = document.getElementById('stored-water-bar');
+const giveStoredWaterBtn = document.getElementById('give-stored-water-btn');
+const resetWaterBtn = document.getElementById('reset-water-btn');
+const STORED_WATER_MAX = 10; // 10 spots for stored water
+const OZ_PER_STORED_WATER = 24; // 24oz fills one spot
+
+// Load stored water from localStorage or start at 0
+let storedWater = parseInt(localStorage.getItem('storedWater')) || 0;
+
+// Function to render the stored water bar
+function renderStoredWaterBar() {
+  // Show filled spots as water drops, empty as boxes
+  let filled = '💧'.repeat(storedWater);
+  let empty = '⬜️'.repeat(STORED_WATER_MAX - storedWater);
+  storedWaterBar.innerText = filled + empty;
+  // Disable button if no stored water or hydration is max
+  giveStoredWaterBtn.disabled = storedWater === 0 || hydration >= MAX_HYDRATION;
 }
 
-// Add event listeners for each button
+// When user logs water, check if enough for stored water
+function addOunces(oz) {
+  waterLog += oz;
+  // Add to leftover ounces
+  leftoverOunces += oz;
+  // While enough for a stored water spot and not at max
+  while (leftoverOunces >= OZ_PER_STORED_WATER && storedWater < STORED_WATER_MAX) {
+    storedWater++;
+    leftoverOunces -= OZ_PER_STORED_WATER;
+  }
+  // Save to localStorage
+  localStorage.setItem('waterTotal', waterLog);
+  localStorage.setItem('waterDate', getToday());
+  localStorage.setItem('storedWater', storedWater);
+  localStorage.setItem('leftoverOunces', leftoverOunces);
+  renderWaterTotal();
+  renderStoredWaterBar();
+}
+
+// When user clicks give stored water button
+// Give 1 hydration if not at max, use 1 stored water
+giveStoredWaterBtn.addEventListener('click', function() {
+  if (storedWater > 0 && hydration < MAX_HYDRATION) {
+    storedWater--;
+    hydration++;
+    if (hydration > MAX_HYDRATION) {
+      hydration = MAX_HYDRATION;
+    }
+    // Save changes
+    localStorage.setItem('storedWater', storedWater);
+    localStorage.setItem('hydration', hydration);
+    wolfMessage.innerText = "The wolf drank your stored water! 🐺💧";
+    renderBars();
+    renderStoredWaterBar();
+  }
+});
+
+// Add event listener for the reset button
+resetWaterBtn.addEventListener('click', function() {
+  // Reset water log and leftover ounces to zero
+  waterLog = 0;
+  leftoverOunces = 0;
+  localStorage.setItem('waterTotal', waterLog);
+  localStorage.setItem('leftoverOunces', leftoverOunces);
+  // Optionally, do not reset stored water (students can change this if they want)
+  renderWaterTotal();
+  renderStoredWaterBar(); // Make sure stored water bar is up to date
+  // Now users can add ounces again as normal!
+});
+
+// Add event listeners for each ounce button
 add8ozBtn.addEventListener('click', function() {
   addOunces(8);
 });
@@ -127,6 +204,82 @@ add24ozBtn.addEventListener('click', function() {
   addOunces(24);
 });
 
+// Update stored water bar on page load
+renderStoredWaterBar();
+
 // Show the current water total on page load
 renderWaterTotal();
 
+// --- Flip Card Study Section ---
+// Get references to flip card elements
+const createFlipBtn = document.getElementById('create-flip-btn');
+const flipQuestionInput = document.getElementById('flip-question');
+const flipAnswerInput = document.getElementById('flip-answer');
+const flipCardStack = document.getElementById('flip-card-stack');
+const flipStackFeedback = document.getElementById('flip-stack-feedback');
+
+// Store all flip cards in an array
+let flipCards = [];
+const FLIP_CARD_LIMIT = 100;
+
+// Function to render all flip cards in the stack
+function renderFlipCardStack() {
+  flipCardStack.innerHTML = '';
+  flipCards.forEach((card, idx) => {
+    // Create card container
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'flip-card-single';
+    // Inner card for flipping
+    const innerDiv = document.createElement('div');
+    innerDiv.className = 'flip-card-inner';
+    // Front and back
+    const frontDiv = document.createElement('div');
+    frontDiv.className = 'flip-card-front';
+    frontDiv.innerText = card.question;
+    const backDiv = document.createElement('div');
+    backDiv.className = 'flip-card-back';
+    backDiv.innerText = card.answer;
+    // Flip on click
+    innerDiv.addEventListener('click', function() {
+      innerDiv.classList.toggle('flipped');
+    });
+    innerDiv.appendChild(frontDiv);
+    innerDiv.appendChild(backDiv);
+    cardDiv.appendChild(innerDiv);
+    // Answer section
+    const answerSection = document.createElement('div');
+    answerSection.className = 'flip-card-answer-section';
+    const answerInput = document.createElement('input');
+    answerInput.type = 'text';
+    answerInput.placeholder = 'Type your answer...';
+    const checkBtn = document.createElement('button');
+    checkBtn.innerText = 'Check Answer';
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'flip-card-feedback';
+    // Check answer logic
+    checkBtn.addEventListener('click', function() {
+      if (answerInput.value.trim().toLowerCase() === card.answer.toLowerCase()) {
+        feedbackDiv.innerText = 'Correct! 🎉';
+        feedbackDiv.style.color = '#2e9df7';
+      } else {
+        feedbackDiv.innerText = 'Oops! The wolf lost health and hydration.';
+        feedbackDiv.style.color = '#e53935';
+        // Wolf loses 1 health and 1 hydration, but not below 0
+        if (health > 0) health--;
+        if (hydration > 0) hydration--;
+        localStorage.setItem('health', health);
+        localStorage.setItem('hydration', hydration);
+        renderBars();
+      }
+    });
+    answerSection.appendChild(answerInput);
+    answerSection.appendChild(checkBtn);
+    answerSection.appendChild(feedbackDiv);
+    cardDiv.appendChild(answerSection);
+    flipCardStack.appendChild(cardDiv);
+  });
+}
+
+// Create a new flip card when the button is clicked
+createFlipBtn.addEventListener('click', function() {
+  const question = flipQuestionInput.value.trim();
