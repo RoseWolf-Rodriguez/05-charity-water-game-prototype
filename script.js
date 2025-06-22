@@ -291,6 +291,27 @@ loginBtn.addEventListener('click', function() {
   }
 });
 
+// Log out button event
+const logoutBtn = document.getElementById('logout-btn');
+logoutBtn.addEventListener('click', function() {
+  currentUser = '';
+  loginStatus.innerText = 'Logged out.';
+  loginStatus.style.color = '#e53935';
+  flipCardStack.innerHTML = '';
+  waterLog = 0;
+  leftoverOunces = 0;
+  storedWater = 0;
+  hydration = 5; // Reset to starting value
+  health = 6;    // Reset to starting value
+  renderWaterTotal();
+  renderStoredWaterBar();
+  renderBars();
+  wolfMessage.innerText = 'Hi friend! Study and stay hydrated 💛';
+  // Optionally, clear flip card input fields
+  flipQuestionInput.value = '';
+  flipAnswerInput.value = '';
+});
+
 // Function to render all flip cards in the stack
 function renderFlipCardStack() {
   flipCardStack.innerHTML = '';
