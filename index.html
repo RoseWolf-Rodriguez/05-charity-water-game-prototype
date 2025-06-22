@@ -8,11 +8,19 @@
 </head>
 <body>
   <main>
-    <h1>Water Wolf 🐺💧</h1>
+    <!-- Login Section -->
+    <section class="login-section">
+      <label for="username-input">Username:</label>
+      <input type="text" id="username-input" placeholder="Enter your username" />
+      <button id="login-btn">Log In</button>
+      <span id="login-status"></span>
+    </section>
+
+    <h1>Water Wolf Flash 🐺💧</h1>
     <div class="game-container">
       <!-- Wolf image, using the correct path to the img folder -->
       <img src="img/wolf.gif" alt="Wolf" id="wolf" />
-      <p id="wolf-message">Hi friend! Stay hydrated 💛</p>
+      <p id="wolf-message">Hi friend! Study and stay hydrated 💛</p>
       <button id="water-btn">Give Love 💙</button>
     
       <section>
@@ -34,7 +42,7 @@
       <button id="add-8oz">+8 oz</button>
       <button id="add-16oz">+16 oz</button>
       <button id="add-24oz">+24 oz</button>
-      <div id="water-total">Total today: 0 oz</div>
+      <div id="water-total">Today's Total: 0 oz</div>
       <button id="reset-water-btn">Reset Water Total</button>
     </section>
     <!-- Stored Water Section -->
@@ -45,7 +53,7 @@
     </section>
     <!-- Flip Card Study Section -->
     <section class="flip-card-section">
-      <h2>Make Your Own Flip Cards!</h2>
+      <h2>Have a minute to study?</h2>
       <label>Question: <input type="text" id="flip-question" /></label><br>
       <label>Answer: <input type="text" id="flip-answer" /></label><br>
       <button id="create-flip-btn">Create Flip Card</button>

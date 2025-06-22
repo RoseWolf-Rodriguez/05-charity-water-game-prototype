@@ -77,7 +77,30 @@ dailyDehydration(); // Check if a day has passed and update hydration/health
 renderBars(); // Show the current bars
 
 // Listen for clicks on the 'Give Love' button and give health
+const LOVE_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+const lastLoveTime = localStorage.getItem('lastLoveTime');
+
+function updateLoveBtnState() {
+  const now = Date.now();
+  const last = parseInt(localStorage.getItem('lastLoveTime')) || 0;
+  if (now - last < LOVE_COOLDOWN_MS) {
+    waterBtn.disabled = true;
+    const mins = Math.ceil((LOVE_COOLDOWN_MS - (now - last)) / 60000);
+    waterBtn.innerText = `Give Love 🧡 (wait ${mins} min)`;
+  } else {
+    waterBtn.disabled = false;
+    waterBtn.innerText = 'Give Love 💙';
+  }
+}
+
 waterBtn.addEventListener('click', function() {
+  // Check if cooldown is over
+  const now = Date.now();
+  const last = parseInt(localStorage.getItem('lastLoveTime')) || 0;
+  if (now - last < LOVE_COOLDOWN_MS) {
+    wolfMessage.innerText = "You can only give love once every hour!";
+    return;
+  }
   // Increase health if not already at max
   if (health < MAX_HEALTH) {
     health++;
@@ -87,7 +110,15 @@ waterBtn.addEventListener('click', function() {
   } else {
     wolfMessage.innerText = "The wolf already feels great! 🧡";
   }
+  // Set cooldown
+  localStorage.setItem('lastLoveTime', now);
+  updateLoveBtnState();
 });
+
+// Check cooldown every minute to re-enable button if needed
+setInterval(updateLoveBtnState, 60000);
+// Also check on page load
+updateLoveBtnState();
 
 // --- Water Intake Logger Code ---
 // Get references to the new water log buttons and total display
@@ -222,6 +253,44 @@ const flipStackFeedback = document.getElementById('flip-stack-feedback');
 let flipCards = [];
 const FLIP_CARD_LIMIT = 100;
 
+// --- Login and Flip Card Save/Load ---
+const loginBtn = document.getElementById('login-btn');
+const usernameInput = document.getElementById('username-input');
+const loginStatus = document.getElementById('login-status');
+let currentUser = '';
+
+// Function to save flip cards for the current user
+function saveFlipCards() {
+  if (currentUser) {
+    localStorage.setItem('flipCards_' + currentUser, JSON.stringify(flipCards));
+  }
+}
+// Function to load flip cards for the current user
+function loadFlipCards() {
+  if (currentUser) {
+    const saved = localStorage.getItem('flipCards_' + currentUser);
+    if (saved) {
+      flipCards = JSON.parse(saved);
+    } else {
+      flipCards = [];
+    }
+    renderFlipCardStack();
+  }
+}
+// Login button event
+loginBtn.addEventListener('click', function() {
+  const username = usernameInput.value.trim();
+  if (username) {
+    currentUser = username;
+    loginStatus.innerText = `Logged in as ${currentUser}`;
+    loginStatus.style.color = '#2e9df7';
+    loadFlipCards();
+  } else {
+    loginStatus.innerText = 'Please enter a username.';
+    loginStatus.style.color = '#e53935';
+  }
+});
+
 // Function to render all flip cards in the stack
 function renderFlipCardStack() {
   flipCardStack.innerHTML = '';
@@ -272,14 +341,53 @@ function renderFlipCardStack() {
         renderBars();
       }
     });
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerText = 'Delete';
+    deleteBtn.style.marginLeft = '0.5rem';
+    deleteBtn.style.background = '#e53935';
+    deleteBtn.style.color = '#fff';
+    deleteBtn.style.border = 'none';
+    deleteBtn.style.borderRadius = '4px';
+    deleteBtn.style.cursor = 'pointer';
+    deleteBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent flip on delete
+      flipCards.splice(idx, 1); // Remove this card
+      renderFlipCardStack(); // Re-render stack
+    });
     answerSection.appendChild(answerInput);
     answerSection.appendChild(checkBtn);
+    answerSection.appendChild(deleteBtn);
     answerSection.appendChild(feedbackDiv);
     cardDiv.appendChild(answerSection);
     flipCardStack.appendChild(cardDiv);
   });
+  saveFlipCards(); // Save after rendering (adding/removing cards)
 }
 
 // Create a new flip card when the button is clicked
 createFlipBtn.addEventListener('click', function() {
+  if (!currentUser) {
+    flipStackFeedback.innerText = 'Please log in to save your cards.';
+    flipStackFeedback.style.color = '#e53935';
+    return;
+  }
   const question = flipQuestionInput.value.trim();
+  const answer = flipAnswerInput.value.trim();
+  if (question && answer) {
+    if (flipCards.length >= FLIP_CARD_LIMIT) {
+      flipStackFeedback.innerText = 'You can only have 100 flip cards.';
+      flipStackFeedback.style.color = '#e53935';
+      return;
+    }
+    flipCards.push({ question, answer });
+    renderFlipCardStack();
+    flipStackFeedback.innerText = `Card added! (${flipCards.length}/100)`;
+    flipStackFeedback.style.color = '#2e9df7';
+    flipQuestionInput.value = '';
+    flipAnswerInput.value = '';
+  }
+});
+
+// ---
+
